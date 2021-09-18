@@ -1,0 +1,24 @@
+{
+  "name": "lucas/github-actions-examples",
+  "type": "project",
+  "autoload": {
+    "psr-4": {
+      "Psr\\": "src/Psr",
+      "Hugger\\": "src/Hugger"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "HuggerTest\\": "tests/Hugger"
+    }
+  },
+  "authors": [
+    {
+      "name": "Lucas dos Santos Abreu",
+      "email": "lucas.s.abreu@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  }
+}

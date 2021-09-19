@@ -34,8 +34,4 @@ jobs:
 
       - name: Execute
         run: |
-          php vendor/bin/phpinsights analyse --format=json | \
-            jq -r '. | keys[] as $k | .[$k] | arrays |
-              map(. + {line: (if .line then .line else 0 end)}) |
-              map ("::error file=" + .file + ",line=" + (.line|tostring) + ",title=" + .insightClass + "::" + .title) |
-              .[]'
+          php vendor/bin/phpinsights analyse --format=github-action

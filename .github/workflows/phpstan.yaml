@@ -1,11 +1,11 @@
-name: "PHPUnit"
+name: "PHPStan"
 on:
   pull_request:
   push:
     branches: [main]
 
 jobs:
-  php-tests:
+  php-stan:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -32,11 +32,5 @@ jobs:
         if: steps.cache-composer-vendor.outputs.cache-hit != 'true'
         run: composer install --prefer-dist
 
-      - name: Execute Unit Tests
-        run: phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./clover.xml
+      - name: Execute PHPStan
+        run: php vendor/bin/phpstan analyse src --level 8 --error-format=github

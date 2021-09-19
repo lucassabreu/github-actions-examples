@@ -33,7 +33,7 @@ class Friendly implements GroupHuggable
     /**
      * {@inheritDoc}
      */
-    public function groupHug($huggables)
+    public function groupHug($huggables): void
     {
         array_map(
             fn ($h) => $this->hug($h),

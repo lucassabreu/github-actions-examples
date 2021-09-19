@@ -17,8 +17,9 @@ interface Huggable
      * object back by calling hug() on the first parameter. All objects MUST
      * implement a mechanism to prevent an infinite loop of hugging.
      *
-     * @param Huggable $h
+     * @param  Huggable $h
      *   The object that is hugging this object.
+     * @return void
      */
     public function hug(Huggable $h);
 }

@@ -11,7 +11,7 @@ class Common implements Huggable
     /**
      * {@inheritDoc}
      */
-    public function hug(Huggable $h)
+    public function hug(Huggable $h): void
     {
         if ($this->who == $h) {
             $this->who = null;

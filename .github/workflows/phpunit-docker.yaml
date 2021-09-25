@@ -1,0 +1,28 @@
+name: "PHPUnit (with Docker)"
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/lucassabreu/php-with-exts-example:main
+      options: --user root
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      - name: Execute Unit Tests
+        run: vendor/bin/phpunit --coverage-clover=clover.xml --path-coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./clover.xml

@@ -1,0 +1,27 @@
+name: "PHPCS (Docker in Docker)"
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/lucassabreu/php-with-exts-example:main
+      options: --user root
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: composer install --prefer-dist
+
+      - name: PHPCS
+        uses: docker://phpqa/phpcs
+        with:
+          args: |
+            sh -c "phpcs src --report=emacs \
+              | sed \"s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|\
+                ::error file=\1,line=\2,col=\3::\4|\""

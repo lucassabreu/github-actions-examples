@@ -1,0 +1,23 @@
+name: "Cowsay"
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  cowsay:
+    if: "${{ startsWith('/cowsay ', github.event.comment.body) }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Extract comment
+        run: |
+          echo "message=$(cut -c 8- "${{ github.event.comment.body }}")" \
+            >> $GITHUB_ENV
+      - name: Cowsay on the comment
+        uses: Code-Hex/neo-cowsay-action@v1
+        with:
+          message: ${{ env.message }}
+          cow: "random"
+          cowsay_on_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

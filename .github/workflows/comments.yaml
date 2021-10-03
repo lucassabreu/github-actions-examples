@@ -1,0 +1,26 @@
+name: "Octocat say"
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  cowsay:
+    if: "${{ startsWith(github.event.comment.body, '/say') }}"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Octocat says
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const message = context.payload.comment.body.substring(5) ||
+              (await github.rest.meta.getZen()).data;
+            const say = await github.rest.meta.getOctocat({
+              s: message
+            });
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: "```\n" + (new TextDecoder().decode(say.data)) + "\n```",
+            });

@@ -1,11 +1,11 @@
-name: "PHPUnit (with Docker)"
+name: "PHPCS (Docker in Docker)"
 on:
   pull_request:
   push:
     branches: [main]
 
 jobs:
-  php-tests:
+  check:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/lucassabreu/php-with-exts-example:main
@@ -18,10 +18,10 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist
 
-      - name: Execute Unit Tests
-        run: phpdbg -qrr vendor/bin/phpunit --coverage-clover=clover.xml
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+      - name: PHPCS
+        uses: docker://phpqa/phpcs
         with:
-          files: ./clover.xml
+          args: |
+            sh -c "phpcs src --report=emacs \
+              | sed \"s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|\
+                ::error file=\1,line=\2,col=\3::\4|\""

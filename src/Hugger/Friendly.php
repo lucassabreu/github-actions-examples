@@ -20,8 +20,7 @@ class Friendly implements GroupHuggable
     public function hug(Huggable $h): void
     {
         if ($this->who === $h && $this->count >= $this->backHugsLimit) {
-            $this->who = null;
-            $this->count = 0;
+            $this->count = $this->who = null;
             return;
         }
 

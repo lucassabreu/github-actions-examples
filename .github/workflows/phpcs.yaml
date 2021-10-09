@@ -36,3 +36,4 @@ jobs:
         run: |
           php vendor/bin/phpcs src --report=emacs | \
             sed "s|^.*src|src|;s|\(.*\):\(.*\):\(.*\):\(.*\)|::error file=\1,line=\2,col=\3::\4|"
+          exit ${PIPESTATUS[0]}

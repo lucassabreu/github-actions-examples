@@ -1,0 +1,59 @@
+name: "PHPUnit (Save Report)"
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      COMPOSER_NO_INTERACTION: 1
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.0
+          tools: composer:v2
+
+      - name: Cache vendor
+        id: cache-composer-vendor
+        uses: actions/cache@v2
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-vendor--${{ hashFiles('**/composer.lock') }}
+
+      - name: Install dependencies
+        if: steps.cache-composer-vendor.outputs.cache-hit != 'true'
+        run: composer install --prefer-dist
+
+      - name: Execute Unit Tests
+        id: phpunit
+        run: |
+          echo "PHPUNIT_OUTPUT<<EOF" >> $GITHUB_ENV
+          php vendor/bin/phpunit --testdox --coverage-text 2>&1 | tee -a $GITHUB_ENV
+          result=${PIPESTATUS[0]}
+          echo "EOF" >> $GITHUB_ENV
+          exit $result
+
+      - uses: actions/github-script@v4
+        with:
+          script: |
+            github.checks.create({
+              name: "PHPUnit Report",
+              head_sha: context.payload.pull_request ?
+                context.payload.pull_request.head.sha : context.sha,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              output: {
+                title: "PHPUnit Report",
+                summary: '```\n' + process.env.PHPUNIT_OUTPUT + '\n```',
+              },
+              conclusion: "success",
+              status: "completed",
+            })
